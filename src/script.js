@@ -1,5 +1,6 @@
 import "./style.css";
 import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/Orbitcontrols.js";
 
 /**
  * Base
@@ -31,6 +32,9 @@ camera.position.z = 2;
 camera.lookAt(mesh.position);
 scene.add(camera);
 
+//Orbit Controls
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
 // Renderer
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
@@ -53,6 +57,9 @@ const tick = () => {
 
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
+
+  // required if controls.enableDamping or controls.autoRotate are set to true
+  controls.update();
 };
 
 tick();
