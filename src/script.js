@@ -1,6 +1,15 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/Orbitcontrols.js";
+import gsap from "gsap";
+import * as dat from "dat.gui";
+
+const parameters = {
+  color: 0xffff00,
+  spin: () => {
+    gsap.to(mesh.rotation, 1, { x: mesh.rotation.x + Math.PI * 2 });
+  },
+};
 
 /**
  * Base
@@ -32,10 +41,9 @@ window.addEventListener("resize", () => {
 const scene = new THREE.Scene();
 
 // Object
-const mesh = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ color: 0xffff00 })
-);
+const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+const material = new THREE.MeshBasicMaterial({ color: parameters.color });
+const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
 // Camera
@@ -60,6 +68,24 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 // Animate
 const clock = new THREE.Clock();
 //console.log(clock);
+
+/**
+ * Debug
+ */
+const gui = new dat.GUI({
+  // closed: true,
+  width: 400,
+});
+// gui.hide()
+gui.add(mesh.position, "y").min(-3).max(3).step(0.01).name("elevation");
+gui.add(mesh, "visible");
+gui.add(material, "wireframe");
+
+gui.addColor(parameters, "color").onChange(() => {
+  material.color.set(parameters.color);
+});
+
+gui.add(parameters, "spin");
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
